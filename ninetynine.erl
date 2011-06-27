@@ -21,15 +21,15 @@ p2([_|T]) ->
 p3([H|_], 1) ->
     H;
 p3([_|T], K) ->
-    p3(T,K-1).
+    p3(T, K-1).
 
 %% Find the number of elements of a list.
 p4([_|T]) ->
-    p4_counter(T,1).
-p4_counter([], Counter) ->
-    Counter;
-p4_counter([_|T], Counter) ->
-    p4_counter(T, Counter+1).
+    p4_counter(T, 1).
+p4_counter([], Accum) ->
+    Accum;
+p4_counter([_|T], Accum) ->
+    p4_counter(T, Accum+1).
 
 -include_lib("eunit/include/eunit.hrl").
 
