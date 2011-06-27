@@ -24,6 +24,8 @@ p3([_|T], K) ->
     p3(T, K-1).
 
 %% Find the number of elements of a list.
+p4([]) ->
+    0;
 p4([_|T]) ->
     p4_counter(T, 1).
 p4_counter([], Accum) ->
@@ -43,4 +45,5 @@ p3_test() ->
     ?assertEqual($E, p3("Erlang", 1)).
 p4_test() ->
     ?assertEqual(6, p4([1,2,3,4,5,6])),
-    ?assertEqual(6, p4("Erlang")).
+    ?assertEqual(6, p4("Erlang")),
+    ?assertEqual(0, p4([])).
