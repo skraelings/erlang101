@@ -1,9 +1,9 @@
-%% Nine-Nine Lisp problems in Erlang
+%% Ninety-Nine Prolog problems in Erlang
 %% https://sites.google.com/site/prologsite/prolog-problems
 %% dom 26 jun 2011 23:08:32 PET
 
 -module(ninetynine).
--export([p1/1,p2/1,p3/2,p4/1]).
+-export([p1/1,p2/1,p3/2,p4/1,p5/1,p6/1]).
 
 %% Find the last element of a list.
 p1([Last]) ->
@@ -31,6 +31,18 @@ p4_accum([], Accum) ->
 p4_accum([_|T], Accum) ->
     p4_accum(T, Accum+1).
 
+%% Reverse a list.
+p5(List) ->
+    p5_aux(List, []).
+p5_aux([], Reversed) ->
+    Reversed;
+p5_aux([H|T], Reversed) ->
+    p5_aux(T, [H|Reversed]).
+
+%% Find out whether a list is a palindrome.
+p6(List) ->
+    List == p5(List).
+
 -include_lib("eunit/include/eunit.hrl").
 
 p1_test() ->
@@ -45,3 +57,10 @@ p4_test() ->
     ?assertEqual(6, p4([1,2,3,4,5,6])),
     ?assertEqual(6, p4("Erlang")),
     ?assertEqual(0, p4([])).
+p5_test() ->
+    ?assertEqual("gnalrE", p5("Erlang")),
+    ?assertEqual("", p5("")).
+p6_test() ->
+    ?assertEqual(true, p6([$x,$a,$m,$a,$x])),
+    ?assertEqual(true, p6([3,7,8,8,7,3])),
+    ?assertEqual(false, p6([1,0,0])).
