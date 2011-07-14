@@ -3,7 +3,7 @@
 %% dom 26 jun 2011 23:08:32 PET
 
 -module(ninetynine).
--export([p1/1,p2/1,p3/2,p4/1,p5/1,p6/1]).
+-export([p1/1,p2/1,p3/2,p4/1,p5/1,p6/1,p7/1]).
 
 %% Find the last element of a list.
 p1([Last]) ->
@@ -43,6 +43,21 @@ p5_aux([H|T], Reversed) ->
 p6(List) ->
     List == p5(List).
 
+%% Flatten a nested list structure.
+%%% Exhibits same behaviour as lists:flatten when elements are strings and
+%%% lists:append won't work for very nested list.
+%%% Use of io_lib:char_list as Peer Stritzinger suggest might be the solution:
+%%% http://stackoverflow.com/questions/2911420/erlang-flattening-a-list-of-strings
+p7(Nested_list) ->
+    p5(p7_aux(Nested_list, [])).
+p7_aux([], Flattened) ->
+    Flattened;
+p7_aux([H|T], Flattened) ->
+    Flat = p7_aux(H, Flattened),
+    p7_aux(T, Flat);
+p7_aux(Val, Flattened) when not(is_list(Val)) ->
+    [Val|Flattened].
+
 -include_lib("eunit/include/eunit.hrl").
 
 p1_test() ->
@@ -64,3 +79,6 @@ p6_test() ->
     ?assertEqual(true, p6([$x,$a,$m,$a,$x])),
     ?assertEqual(true, p6([3,7,8,8,7,3])),
     ?assertEqual(false, p6([1,0,0])).
+p7_test() ->
+    ?assertEqual([$a,$b,$c,$d,$e], p7([$a,[$b,[$c,$d],$e]])),
+    ?assertEqual([1,2,3,4], p7([[[1,2],[3]],[[4]]])).
