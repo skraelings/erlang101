@@ -3,7 +3,7 @@
 %% dom 26 jun 2011 23:08:32 PET
 
 -module(ninetynine).
--export([p1/1,p2/1,p3/2,p4/1,p5/1,p6/1,p7/1]).
+-export([p1/1,p2/1,p3/2,p4/1,p5/1,p6/1,p7/1,p8/1]).
 
 %% Find the last element of a list.
 p1([Last]) ->
@@ -58,6 +58,25 @@ p7_aux([H|T], Flattened) ->
 p7_aux(Val, Flattened) when not(is_list(Val)) ->
     [Val|Flattened].
 
+%% Eliminate consecutive duplicates of list elements
+p8(List) ->
+    [H|T] = List,
+    p8_aux(H, T, []).
+p8_aux(H, [], Acc) ->
+    lists:reverse([H|Acc]);
+p8_aux(H, [H|T], Acc) ->
+    p8_aux(H,T, Acc);
+p8_aux(H, [H1|T], Acc) ->
+    p8_aux(H1, T, [H|Acc]).
+
+%% Pack consecutive duplicates of list elements into sublists
+p9(List) ->
+    null.
+
+%% Run-length encoding of a list
+p10(List) ->
+    null.
+
 -include_lib("eunit/include/eunit.hrl").
 
 p1_test() ->
@@ -82,3 +101,5 @@ p6_test() ->
 p7_test() ->
     ?assertEqual([$a,$b,$c,$d,$e], p7([$a,[$b,[$c,$d],$e]])),
     ?assertEqual([1,2,3,4], p7([[[1,2],[3]],[[4]]])).
+p8_test() ->
+    ?assertEqual([a,b,c,a,d,e], p8([a,a,a,a,b,c,c,a,a,d,e,e,e,e])).
