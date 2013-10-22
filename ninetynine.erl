@@ -4,7 +4,8 @@
 
 -module(ninetynine).
 -export([p1/1,p2/1,p3/2,p4/1,p5/1,
-	 p6/1,p7/1,p8/1,p9/1,p10/1]).
+	 p6/1,p7/1,p8/1,p9/1,p10/1,
+	 p11/1,p12/1]).
 
 %% Find the last element of a list.
 p1([Last]) ->
@@ -114,6 +115,48 @@ p10_aux(H, [H1|T], Acc) ->
     NE = [1, H],
     p10_aux(H1, T, [NE|Acc]).
 
+%% Modified run-length encoding 
+%% Modify the result of problem 1.10 in such a way that if an element has no
+%% duplicates it is simply copied into the result list. Only elements with
+%% duplicates are transferred as [N,E] terms
+p11(List) ->
+    [H|T] = p9(List),
+    p11_aux(H, T, []).
+p11_aux(H, [], Acc) when is_list(H) ->
+    NE = [p4(H), hd(H)],
+    lists:reverse([NE|Acc]);
+p11_aux(H, [], Acc) ->
+    lists:reverse([H|Acc]);
+p11_aux(H, [H1|T], Acc) when is_list(H) ->
+    NE = [p4(H), hd(H)],
+    p11_aux(H1, T, [NE|Acc]);
+p11_aux(H, [H1|T], Acc) ->
+    p11_aux(H1, T, [H|Acc]).
+
+%% Decode a run-length encoded list
+p12(List) ->
+    [H|T] = List,
+    p12_aux(H, T, []).
+p12_aux([N,E], [], Acc) ->
+    %% create the list `E repeated N times`
+    %% extend Acc with the list just created
+    ExpandedList = p12_dup(E, N),
+    lists:reverse(lists:append(ExpandedList, Acc));
+p12_aux([N,E], [H|T], Acc) ->
+    ExpandedList = p12_dup(E, N),
+    p12_aux(H, T, lists:append(ExpandedList, Acc));
+p12_aux(N, [], Acc) ->
+    lists:reverse([N|Acc]);
+p12_aux(N, [H|T], Acc) ->
+    p12_aux(H, T, [N|Acc]).
+
+p12_dup(E, N) ->
+    p12_dup_aux(E, N - 1, []).
+p12_dup_aux(E, 0, Acc) ->
+    [E|Acc];
+p12_dup_aux(E, N, Acc) ->
+    p12_dup_aux(E, N - 1, [E|Acc]).
+
 -include_lib("eunit/include/eunit.hrl").
 
 p1_test() ->
@@ -146,3 +189,8 @@ p9_test() ->
     ?assertEqual([[a,a,a],b,c,[d,d,d],e,[f,f,f]], p9([a,a,a,b,c,d,d,d,e,f,f,f])).
 p10_test() ->
     ?assertEqual([[4,a],[1,b],[2,c],[2,a],[1,d],[4,e]], p10([a,a,a,a,b,c,c,a,a,d,e,e,e,e])).
+p11_test() ->
+    ?assertEqual([[4,a],b,[2,c],[2,a],d,[4,e]], p11([a,a,a,a,b,c,c,a,a,d,e,e,e,e])).
+p12_test() ->
+    ?assertEqual([a,a,a,a,b,c,c,a,a,d,e,e,e,e], p12([[4,a],b,[2,c],[2,a],d,[4,e]])),
+    ?assertEqual([a,a,a,a,b,c,c,a,a,d,e,e,e,e], p12([[4,a],[1,b],[2,c],[2,a],[1,d],[4,e]])).
