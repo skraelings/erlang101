@@ -5,7 +5,7 @@
 -module(ninetynine).
 -export([p1/1,p2/1,p3/2,p4/1,p5/1,
 	 p6/1,p7/1,p8/1,p9/1,p10/1,
-	 p11/1,p12/1]).
+	 p11/1,p12/1,p13/1,p14/1]).
 
 %% Find the last element of a list.
 p1([Last]) ->
@@ -157,6 +157,18 @@ p12_dup_aux(E, 0, Acc) ->
 p12_dup_aux(E, N, Acc) ->
     p12_dup_aux(E, N - 1, [E|Acc]).
 
+%% Run-length encoding of a list (direct solution).
+p13(List) ->
+    undefined.
+
+%% Duplicate the elements of a list.
+p14(List) ->
+    p14_aux(List, []).
+p14_aux([H|T], Acc) ->
+    p14_aux(T, lists:append(p12_dup(H, 2), Acc));
+p14_aux([], Acc) ->
+    lists:reverse(Acc).
+
 -include_lib("eunit/include/eunit.hrl").
 
 p1_test() ->
@@ -194,3 +206,7 @@ p11_test() ->
 p12_test() ->
     ?assertEqual([a,a,a,a,b,c,c,a,a,d,e,e,e,e], p12([[4,a],b,[2,c],[2,a],d,[4,e]])),
     ?assertEqual([a,a,a,a,b,c,c,a,a,d,e,e,e,e], p12([[4,a],[1,b],[2,c],[2,a],[1,d],[4,e]])).
+p13_test() ->
+    ?assertEqual([[4,a],b,[2,c],[2,a],d,[4,e]], p13([a,a,a,a,b,c,c,a,a,d,e,e,e,e])).
+p14_test() ->
+    ?assertEqual([a,a,b,b,c,c,c,c,d,d], p14([a,b,c,c,d])).
