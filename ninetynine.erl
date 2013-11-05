@@ -6,7 +6,7 @@
 -export([p1/1,p2/1,p3/2,p4/1,p5/1,
 	 p6/1,p7/1,p8/1,p9/1,p10/1,
 	 p11/1,p12/1,p13/1,p14/1,
-	 p15/2,p16/2,p17/2]).
+	 p15/2,p16/2,p17/2,p12_dup/2]).
 
 %% Find the last element of a list.
 p1([Last]) ->
@@ -180,7 +180,13 @@ p15_aux([], _, Acc) ->
 
 %% Drop every N'th element from a list.
 p16(List, DropEveryXTimes) ->
-    undefined.
+    p16_aux(List, DropEveryXTimes - 1, [], 0).
+p16_aux([H|T], DropNow, Acc, DropNow) ->
+    p16_aux(T, DropNow, Acc, 0);
+p16_aux([H|T], DropEveryXTimes, Acc, C) ->
+    p16_aux(T, DropEveryXTimes, [H|Acc], C + 1);
+p16_aux([], _, Acc, _) ->
+    lists:reverse(Acc).
 
 %% Split a list into two parts; the length of the first part is given.
 p17(List, SplitBy) ->
@@ -230,4 +236,6 @@ p14_test() ->
 p15_test() ->
     ?assertEqual([a,a,a,b,b,b,c,c,c], p15([a,b,c],3)).
 p16_test() ->
-    ?assertEqual([a,b,d,e,g,h,k], p16([a,b,c,d,e,f,g,h,i,k],3)).
+    ?assertEqual([a,b,d,e,g,h,k], p16([a,b,c,d,e,f,g,h,i,k],3)),
+    ?assertEqual([a,b,c,d,e,f,g], p16([a,b,c,d,e,f,g],19)),
+    ?assertEqual([], p16([a,b,c,d,e,f,g], 1)).
