@@ -75,29 +75,14 @@ p8_aux(H, [H1|T], Acc) ->
 %% Pack consecutive duplicates of list elements into sublists
 p9([]) ->
     [];
-p9(List) ->
-    [H|T] = List,
-    p9_aux(H, T, []).
-p9_aux(H, [], Acc) ->
-    lists:reverse([H|Acc]);
-p9_aux(H, [H|T], Acc) ->
-    case p9_aux2(H, T, [H]) of
-	[NewH, NewT, Duplicates] when is_list(Duplicates) ->
-	    p9_aux(NewH, NewT, [Duplicates|Acc]);
-	Duplicates ->
-	    lists:reverse([Duplicates|Acc])
-    end;
-p9_aux(H, [H1|T], Acc) ->
-    p9_aux(H1, T, [H|Acc]).
-
-p9_aux2(H, [], DupStack) ->
-    [H|DupStack];
-p9_aux2(H, [H], DupStack) ->
-    p9_aux2(H, [], [H|DupStack]);
-p9_aux2(H, [H|T], DupStack) ->
-    p9_aux2(H, T, [H|DupStack]);
-p9_aux2(H, [H1|T], DupStack) ->
-    [H1,T,[H|DupStack]].
+p9([H|T]) ->
+    p9_aux(T, [H]).
+p9_aux([], Stack) ->
+    [Stack];
+p9_aux([H|T], Stack=[H|_]) ->
+    p9_aux(T, [H|Stack]);
+p9_aux([H|T], Stack) ->
+    [Stack|p9_aux(T, [H])].
 
 %% Run-length encoding of a list
 p10(List) ->
@@ -116,23 +101,23 @@ p10_aux(H, [H1|T], Acc) ->
     NE = [1, H],
     p10_aux(H1, T, [NE|Acc]).
 
-%% Modified run-length encoding 
+%% Modified run-length encoding
 %% Modify the result of problem 1.10 in such a way that if an element has no
 %% duplicates it is simply copied into the result list. Only elements with
 %% duplicates are transferred as [N,E] terms
 p11(List) ->
     [H|T] = p9(List),
     p11_aux(H, T, []).
+p11_aux([H], [], Acc) ->
+    lists:reverse([H|Acc]);
 p11_aux(H, [], Acc) when is_list(H) ->
     NE = [p4(H), hd(H)],
     lists:reverse([NE|Acc]);
-p11_aux(H, [], Acc) ->
-    lists:reverse([H|Acc]);
+p11_aux([H], [H1|T], Acc) ->
+    p11_aux(H1, T, [H|Acc]);
 p11_aux(H, [H1|T], Acc) when is_list(H) ->
     NE = [p4(H), hd(H)],
-    p11_aux(H1, T, [NE|Acc]);
-p11_aux(H, [H1|T], Acc) ->
-    p11_aux(H1, T, [H|Acc]).
+    p11_aux(H1, T, [NE|Acc]).
 
 %% Decode a run-length encoded list
 p12(List) ->
@@ -221,7 +206,7 @@ p7_test() ->
 p8_test() ->
     ?assertEqual([a,b,c,a,d,e], p8([a,a,a,a,b,c,c,a,a,d,e,e,e,e])).
 p9_test() ->
-    ?assertEqual([[a,a,a],b,c,[d,d,d],e,[f,f,f]], p9([a,a,a,b,c,d,d,d,e,f,f,f])).
+    ?assertEqual([[a,a,a],[b],[c],[d,d,d],[e],[f,f,f]], p9([a,a,a,b,c,d,d,d,e,f,f,f])).
 p10_test() ->
     ?assertEqual([[4,a],[1,b],[2,c],[2,a],[1,d],[4,e]], p10([a,a,a,a,b,c,c,a,a,d,e,e,e,e])).
 p11_test() ->
