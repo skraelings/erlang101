@@ -2,7 +2,7 @@
 %% https://sites.google.com/site/prologsite/prolog-problems
 %% dom 26 jun 2011 23:08:32 PET
 
--module(ninetynine).
+-module(ninetynine_lists).
 -export([p1/1,p2/1,p3/2,p4/1,p5/1,
 	 p6/1,p7/1,p8/1,p9/1,p10/1,
 	 p11/1,p12/1,p13/1,p14/1,
@@ -108,11 +108,13 @@ p10_aux(H, [H1|T], Acc) ->
 p11(List) ->
     [H|T] = p9(List),
     p11_aux(H, T, []).
+%% this clause handles the case when the sublist has only 1 element
 p11_aux([H], [], Acc) ->
     lists:reverse([H|Acc]);
 p11_aux(H, [], Acc) when is_list(H) ->
     NE = [p4(H), hd(H)],
     lists:reverse([NE|Acc]);
+%% this clause handles the case when the sublist has only 1 element
 p11_aux([H], [H1|T], Acc) ->
     p11_aux(H1, T, [H|Acc]);
 p11_aux(H, [H1|T], Acc) when is_list(H) ->
